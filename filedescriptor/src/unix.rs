@@ -230,6 +230,12 @@ impl AsRawFd for FileDescriptor {
     }
 }
 
+impl AsFd for FileDescriptor {
+    fn as_fd(&self) -> BorrowedFd {
+        unsafe { BorrowedFd::borrow_raw(self.handle.as_raw_fd()) }
+    }
+}
+
 impl IntoRawFd for FileDescriptor {
     fn into_raw_fd(self) -> RawFd {
         self.handle.into_raw_fd()
