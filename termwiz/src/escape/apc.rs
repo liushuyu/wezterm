@@ -273,6 +273,7 @@ fn read_shared_memory_data(
 ) -> std::result::Result<std::vec::Vec<u8>, std::io::Error> {
     use nix::sys::mman::{shm_open, shm_unlink};
     use std::fs::File;
+    use std::os::fd::AsRawFd;
     use std::os::unix::io::FromRawFd;
 
     let raw_fd = shm_open(
@@ -287,7 +288,7 @@ fn read_shared_memory_data(
             format!("shm_open {} failed: {:#}", name, err),
         )
     })?;
-    let mut f = unsafe { File::from_raw_fd(raw_fd) };
+    let mut f = unsafe { File::from_raw_fd(raw_fd.as_raw_fd()) };
     if let Some(offset) = data_offset {
         f.seek(std::io::SeekFrom::Start(offset.into()))?;
     }
